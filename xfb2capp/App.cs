@@ -14,19 +14,19 @@ namespace xfb2capp
 	{
         public static IAuthenticate Authenticator { get; private set; }
 
-        // 認証インターフェイスをプラットフォーム固有の実装で初期化
-        public static void Init(IAuthenticate authenticator)
-        {
-            Authenticator = authenticator;
-        }
-
         public App ()
 		{
 			// The root page of your application
 			MainPage = new TodoList();
 		}
 
-		protected override void OnStart ()
+        // 認証インターフェイスをプラットフォーム固有の実装で初期化
+        public static void Init(IAuthenticate authenticator)
+        {
+            Authenticator = authenticator;
+        }
+
+        protected override void OnStart ()
 		{
 			// Handle when your app starts
 		}
