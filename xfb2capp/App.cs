@@ -1,12 +1,26 @@
 ﻿using System;
-
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace xfb2capp
 {
-	public class App : Application
+    // 認証インタフェース
+    public interface IAuthenticate
+    {
+        Task<bool> Authenticate();
+    }
+
+    public class App : Application
 	{
-		public App ()
+        public static IAuthenticate Authenticator { get; private set; }
+
+        // 認証インターフェイスをプラットフォーム固有の実装で初期化
+        public static void Init(IAuthenticate authenticator)
+        {
+            Authenticator = authenticator;
+        }
+
+        public App ()
 		{
 			// The root page of your application
 			MainPage = new TodoList();

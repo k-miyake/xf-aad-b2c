@@ -8,11 +8,16 @@ namespace xfb2capp
     {
         TodoItemManager manager;
 
+        // 認証しているかどうかのフラグ 
+        bool authenticated = false;
+
         public TodoList()
         {
             InitializeComponent();
 
             manager = TodoItemManager.DefaultManager;
+
+            
 
             // OnPlatform<T> doesn't currently support the "Windows" target platform, so we have this check here.
             if (manager.IsOfflineEnabled &&
@@ -33,8 +38,14 @@ namespace xfb2capp
         {
             base.OnAppearing();
 
-            // Set syncItems to true in order to synchronize the data on startup when running in offline mode
-            await RefreshItems(true, syncItems: true);
+            // 認証済みの場合は画面を更新する
+            if (authenticated == true)
+            {
+                await RefreshItems(true, syncItems: false);
+
+                // サインインボタンを非表示にする
+                this.loginButton.IsVisible = false;
+            }
         }
 
         // Data methods
@@ -120,6 +131,17 @@ namespace xfb2capp
         public async void OnSyncItems(object sender, EventArgs e)
         {
             await RefreshItems(true, true);
+        }
+
+        // ログインボタンのクリック
+        async void loginButton_Clicked(object sender, EventArgs e)
+        {
+            if (App.Authenticator != null)
+                authenticated = await App.Authenticator.Authenticate();
+
+            // Set syncItems to true to synchronize the data on startup when offline is enabled.
+            if (authenticated == true)
+                await RefreshItems(true, syncItems: false);
         }
 
         private async Task RefreshItems(bool showActivityIndicator, bool syncItems)
